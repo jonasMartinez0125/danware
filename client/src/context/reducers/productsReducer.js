@@ -20,6 +20,29 @@ export const productsReducer = (state, actions) => {
                 isLoading: false,
                 products: actions.payload
             }
+        case productsActions.LOAD_PRODUCTS_ERROR:
+            return {
+                ...state,
+                isLoading: false,
+                errorMessage: actions.payload
+            }
+        case productsActions.LOAD_SAVE_PRODUCT: 
+            return {
+                ...state,
+                isLoading: true
+            }
+        case productsActions.LOAD_SAVE_PRODUCT_SUCCESS:
+            return {
+                ...state,
+                isLoading: false,
+                products: [...state.products, actions.payload ]
+            }
+        case productsActions.LOAD_SAVE_PRODUCT_ERROR:
+            return {
+                ...state,
+                isLoading: false,
+                errorMessage: actions.payload
+            }
         default:
             return state;
     }

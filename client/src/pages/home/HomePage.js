@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Hero } from "../../components/ui/Hero";
 import { Spinner } from "../../components/ui/Spinner";
-import { ProductsContext } from "../../context/providers/ProductsContext";
+import { useProducts } from "../../context/providers/ProductsContext";
 
 export const HomePage = () => {
-  const { isLoading, products } = useContext(ProductsContext);
+  const { isLoading, products } = useProducts();
 
   if (isLoading) {
     return <Spinner />

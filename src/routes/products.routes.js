@@ -6,13 +6,14 @@ import {
     getProducts,
     updateProduct
 } from '../controllers/product.controller';
+import { verifyToken } from '../middlewares/auth.middleware';
 
 const router = Router();
 
 router.get('/products', getProducts);
-router.post('/products', createProduct);
+router.post('/products', verifyToken, createProduct);
 router.get('/products/:id', getProduct);
-router.put('/products/:id', updateProduct);
-router.delete('/products/:id', deleteProduct);
+router.put('/products/:id', verifyToken,updateProduct);
+router.delete('/products/:id', verifyToken, deleteProduct);
 
 export default router;
