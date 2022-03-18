@@ -4,4 +4,8 @@ const API = process.env.REACT_APP_API || '';
 
 export const getProducts = async() =>  await axios.get(`${API}/products`);
 
-export const saveProduct = async (newProduct) => await axios.post(`${API}/products`, newProduct);
+export const saveProduct = async (newProduct, token) => await axios.post(`${API}/products`, newProduct, {
+    headers: {
+        Authorization: token
+    }
+});

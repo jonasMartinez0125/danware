@@ -23,7 +23,6 @@ export const ProductsProvider = ({ children }) => {
                dispatch({ type: productsActions.LOAD_PRODUCTS_SUCCESS, payload: res.data });
            }
        } catch (error) {
-           console.log(error);
            dispatch({ type: productsActions.LOAD_PRODUCTS_ERROR, payload: error.message });
        }
 
@@ -34,11 +33,11 @@ export const ProductsProvider = ({ children }) => {
       loadProducts();
     }, []);
 
-    const addNewProduct = async (newProduct) => {
+    const addNewProduct = async (newProduct, token) => {
         dispatch({ type: productsActions.LOAD_SAVE_PRODUCT })
 
         try {
-            const res = await saveProduct(newProduct);
+            const res = await saveProduct(newProduct, token);
 
             if(res.data) {
                 dispatch({
@@ -47,8 +46,12 @@ export const ProductsProvider = ({ children }) => {
                 });
             }
         } catch (error) {
-           console.log(error);
-           dispatch({ type: productsActions.LOAD_PRODUCTS_ERROR, payload: error.message }) 
+            if(error.response.data) {
+                dispatch({ 
+                    type: productsActions.LOAD_PRODUCTS_ERROR, 
+                    payload: error.response.data.message 
+                });
+            }
         }
     }
 

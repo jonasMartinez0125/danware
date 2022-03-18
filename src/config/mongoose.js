@@ -1,4 +1,4 @@
-import { connect } from 'mongoose';
+import { connect, connection } from 'mongoose';
 import { MONGODB_URL } from '../config';
 
 ( async () => {
@@ -9,3 +9,21 @@ import { MONGODB_URL } from '../config';
 
     console.log('Database connected to:', db.connection.name);
 })();
+
+connection.on('connected', () => {
+    console.log('MongoDB is connected');
+});
+
+connection.on('error', (error) => {
+    console.error(error);
+});
+
+connection.on('disconnected', () => {
+    console.error('MongoDB is disconnected');
+});
+
+process.on('SIGINT', async() => {
+    await connection.close(() => {
+        process.exit(0);
+    })
+});

@@ -2,8 +2,8 @@ import React from 'react'
 
 export const Hero = () => {
   return (
-    <section className="py-5 text-center container">
-    <div className="row py-lg-5">
+    <section className="py-4 text-center container">
+    <div className="row py-lg-4">
       <div className="col-lg-6 col-md-8 mx-auto">
         <h1 className="fw-light">Danware</h1>
         <p className="lead text-muted">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ut totam minima est reprehenderit, delectus voluptatum labore iusto veniam temporibus impedit qui aliquid quam necessitatibus laboriosam.</p>

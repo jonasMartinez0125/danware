@@ -3,7 +3,7 @@ import { productsActions } from '../actions/productsActions';
 export const initialState = {
     isLoading: false,
     products: [],
-    errorMessage: ''
+    errorMessage: null
 };
 
 export const productsReducer = (state, actions) => {
@@ -18,7 +18,8 @@ export const productsReducer = (state, actions) => {
             return {
                 ...state,
                 isLoading: false,
-                products: actions.payload
+                products: actions.payload,
+                errorMessage: null
             }
         case productsActions.LOAD_PRODUCTS_ERROR:
             return {
@@ -35,7 +36,8 @@ export const productsReducer = (state, actions) => {
             return {
                 ...state,
                 isLoading: false,
-                products: [...state.products, actions.payload ]
+                products: [...state.products, actions.payload ],
+                errorMessage: null
             }
         case productsActions.LOAD_SAVE_PRODUCT_ERROR:
             return {
@@ -44,6 +46,6 @@ export const productsReducer = (state, actions) => {
                 errorMessage: actions.payload
             }
         default:
-            return state;
+            return { ...state };
     }
 }

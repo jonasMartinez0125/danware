@@ -1,9 +1,13 @@
 import React from "react";
-import { Hero } from "../../components/ui/Hero";
-import { Spinner } from "../../components/ui/Spinner";
+import { useAuth } from "../../context/providers/AuthContext";
 import { useProducts } from "../../context/providers/ProductsContext";
 
+import { Hero } from "../../components/ui/Hero";
+import { Spinner } from "../../components/ui/Spinner";
+import { ProductCard } from "../../components/products/ProductCard";
+
 export const HomePage = () => {
+  const { isLoggedIn } = useAuth();
   const { isLoading, products } = useProducts();
 
   if (isLoading) {
@@ -14,14 +18,15 @@ export const HomePage = () => {
     <div className="row">
       <Hero />
 
-      {products.map((product) => (
-        <div key={product._id}  className="col-md-4">
-          <div className="card card-body">
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-          </div>
-        </div>
-      ))}
+      {
+        isLoggedIn && (
+          products.map((product) => (
+            <div key={product._id}  className="col-md-3 p-2">
+              <ProductCard product={product} />
+            </div>
+          ))
+        )
+      }
     </div>
   );
 };

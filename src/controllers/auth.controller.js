@@ -1,65 +1,59 @@
-import jwt from "jsonwebtoken";
+import createError from "http-errors";
 import { User } from "../models";
-import { JWT_SECRET } from "../config";
+import { userSchema } from "../libs/schema.validator";
+import { signAccessToken } from '../helpers/signAccessToken';
 
-export const signin = async (req, res) => {
-  
-    const  { email, password } = req.body;
+export const signin = async (req, res, next) => {
+  try {
+    const { email, password } = await userSchema.validateAsync(req.body);
 
     const userFound = await User.findOne({ email });
 
-    if(!userFound) return res.status(401).json({
-          message: 'User not found'
-    });
+    if (!userFound) throw createError(401, "Invalid Email or Password");
 
     const isMatch = await userFound.comparePassword(password);
 
-    if(!isMatch) return res.status(401).json({ message: 'Invalid password ' });
+    if (!isMatch) throw createError(401, "Invalid Email or Password");
 
-    jwt.sign({
-        id: userFound._id
-    }, JWT_SECRET, (err, token) => {
-        if(err) {
-            res.status(500).send(err);
-        } else {
-            res.json({ token });
-        }
-    });
+    const token = await signAccessToken(userFound._id);
 
-}
+    res.json({ token });
+  } catch (error) {
+    if (error.isJoi) error.status = 400;
+    next(error);
+  }
+};
 
-export const signup = async (req, res) => {
-    const  { email, password } = req.body;
-    const user = new User({ email, password });
-
-    user.password = await user.generateHash(password);
-
+export const signup = async (req, res, next) => {
+  try {
+    const { email, password } = await userSchema.validateAsync(req.body);
     const userFound = await User.findOne({ email });
 
-    if(userFound) {
-      res.statusMessage = 'User already exists';
-      return res.status(400).json({
-          message: 'User already exists'
-      });
-    }
+    if (userFound) throw createError.Conflict("User already exists");
+
+    const user = new User({ email, password });
+    user.password = await user.generateHash(password);
 
     const userSaved = await user.save();
 
-    jwt.sign({
-        id: userSaved._id
-    }, JWT_SECRET, (err, token) => {
-        if(err) {
-            res.status(500).send(err);
-        } else {
-            res.json({ token });
-        }
-    });
-}
+    const token = await signAccessToken(userSaved._id);
 
-export const profile = async (req, res) => {
-    const userFound = await User.findOne({ _id: req.userID }).select('-password');
+    res.json({ token });
+  
+  } catch (error) {
+    if (error.isJoi) error.status = 400;
+    next(error);
+  }
+};
 
-    if(!userFound) return res.status(401).json({ message: 'User not found' });
-
-    res.json( userFound);
-}
+export const profile = async (req, res, next) => {
+  try {
+    const userFound = await User.findOne({ _id: req.userID }).select("-password");
+  
+    if (!userFound) throw createError(401, 'User not found');
+    res.json({  user: userFound });
+  } catch (error) {
+    if (error.isJoi) error.status = 400;
+    next(error);
+  }
+};
